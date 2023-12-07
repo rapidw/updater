@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'jvm-test-suite'
+    id "io.freefair.lombok" version "6.6.1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+
+    testImplementation platform('org.apache.groovy:groovy-bom:4.0.16')
+    testImplementation 'org.apache.groovy:groovy'
+    testImplementation 'org.apache.groovy:groovy-json'
+
+    testImplementation platform('org.spockframework:spock-bom:2.4-M1-groovy-4.0')
+    testImplementation "org.spockframework:spock-core"
+
+    testRuntimeOnly 'net.bytebuddy:byte-buddy:1.12.17'
+    testRuntimeOnly "org.objenesis:objenesis:3.3"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+testing {
+    suites {
+        test {
+            useSpock('2.4-M1-groovy-4.0')
+        }
+    }
+}
