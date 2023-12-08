@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Data
 public class UpdateInfo {
-    private Base base;
+    private Config config;
     private Map<String, String> properties;
-    private List<File> fileMetadata;
+    private List<File> files;
 }

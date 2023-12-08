@@ -1,7 +1,7 @@
 package io.rapidw.updater;
 
-import io.rapidw.updater.serdes.UpdateInfo;
 import io.rapidw.updater.serdes.File;
+import io.rapidw.updater.serdes.UpdateInfo;
 import io.rapidw.updater.service.DefaultLauncher;
 import io.rapidw.updater.service.DefaultUpdateStrategy;
 import io.rapidw.updater.service.Launcher;
@@ -29,16 +29,17 @@ public class Updater {
         this.updateStrategy = new DefaultUpdateStrategy();
     }
 
+    public void loadConfiguration(Configuration oldConfig, Configuration newConfig) {
+        this.oldConfig = oldConfig;
+        this.newConfig = newConfig;
+    }
+
     public boolean isUpdateRequired() {
         return updateStrategy.requireUpdate(oldConfig, newConfig);
     }
 
-    public boolean doUpdate() {
-        // 备份原有配置
-        // 备份原有文件
-        // 写入新配置
-        // 获取所有新文件
-        return true;
+    public void doUpdate() {
+        newConfig.getFiles();
     }
 
     public void launchApplication() {
@@ -46,23 +47,23 @@ public class Updater {
     }
 
     public void backup() {
-
+        oldConfig.backup();
     }
 
-    public void rollBack() {
-
+    public void restore() {
+        oldConfig.restore();
     }
 
 
     private List<File> collectOldFiles(UpdateInfo updateInfo) {
         val oldFiles = new ArrayList<File>();
-        for (val newFile : updateInfo.getFileMetadata()) {
+        for (val newFile : updateInfo.getFiles()) {
             val oldFile = new File();
             val path = newFile.getPath();
             if (Paths.get(path).isAbsolute()) {
                 oldFile.setPath(newFile.getPath());
             } else {
-                oldFile.setPath(Paths.get(updateInfo.getBase().getBasePath(), newFile.getPath()).toString());
+                oldFile.setPath(Paths.get(updateInfo.getConfig().getBasePath(), newFile.getPath()).toString());
             }
             oldFile.setChecksum(calculateChecksum(oldFile.getPath()));
             oldFile.setSize(Paths.get(oldFile.getPath()).toFile().length());

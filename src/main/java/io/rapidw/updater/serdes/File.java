@@ -13,4 +13,5 @@ public class File {
     private Long size;
     private Boolean inClasspath;
     private Map<String, String> options;
+    private String handler;
 }

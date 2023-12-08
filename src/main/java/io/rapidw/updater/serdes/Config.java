@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.Instant;
 
 @Data
-public class Base {
+public class Config {
     private Instant timestamp;
     private String baseUri;
     private String basePath;

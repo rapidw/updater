@@ -4,14 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rapidw.updater.serdes.UpdateInfo;
 import lombok.val;
 
+import java.nio.file.Paths;
+
 public class Configuration {
 
     private final UpdateInfo updateInfo;
 
     public Configuration(UpdateInfo updateInfo) {
         this.updateInfo = updateInfo;
-
-
+        processPaths();
     }
 
     public static Configuration loadFromJson(String string) {
@@ -33,11 +34,25 @@ public class Configuration {
         }
     }
 
-    public void loadConfiguration(Configuration oldConfig, Configuration newConfig) {
+    public void backup() {
+        // 备份原有配置
+        // 备份原有文件
+    }
+
+    public void restore() {
+        // 写入新配置
+        // 获取所有新文件
+    }
+
+    public void getFiles() {
 
     }
 
-
-
-
+    private void processPaths() {
+        for (val file : updateInfo.getFiles()) {
+            if (!Paths.get(file.getPath()).isAbsolute()) {
+                file.setPath(Paths.get(updateInfo.getConfig().getBasePath(), file.getPath()).toString());
+            }
+        }
+    }
 }

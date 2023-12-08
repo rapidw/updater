@@ -55,10 +55,13 @@ class ConfigurationSpec extends Specification {
         def newConfig = Configuration.loadFromJson(newJson)
 
         def updater = Updater.builder().build()
+        updater.loadConfiguration(oldConfig, newConfig)
         if (updater.isUpdateRequired()) {
             updater.backup()
-            if (!updater.doUpdate()) {
-                updater.rollBack()
+            try {
+                updater.doUpdate()
+            } catch(Exception ignored) {
+                updater.restore()
             }
         }
 
