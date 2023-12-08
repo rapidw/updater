@@ -1,57 +1,43 @@
 package io.rapidw.updater;
 
-import io.rapidw.updater.serdes.ConfigInfo;
-import io.rapidw.updater.serdes.FileMetadata;
-import io.rapidw.updater.service.DefaultUpdateStrategy;
-import io.rapidw.updater.service.UpdateStrategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.rapidw.updater.serdes.UpdateInfo;
 import lombok.val;
-
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Configuration {
 
-    private final ConfigInfo configInfo;
-    private final UpdateStrategy updateStrategy;
+    private final UpdateInfo updateInfo;
 
-    public Configuration(ConfigInfo configInfo) {
-        this.configInfo = configInfo;
-        this.updateStrategy = new DefaultUpdateStrategy();
-    }
+    public Configuration(UpdateInfo updateInfo) {
+        this.updateInfo = updateInfo;
 
-    public boolean requireUpdate() {
-        val oldFiles = collectOldFiles(configInfo);
-        return updateStrategy.requireUpdate(configInfo, oldFiles);
-    }
-
-    public void doUpdate() {
 
     }
 
-    public void launch() {
-
-    }
-
-
-    private List<FileMetadata> collectOldFiles(ConfigInfo configInfo) {
-        val oldFiles = new ArrayList<FileMetadata>();
-        for (val newFile : configInfo.getFileMetadata()) {
-            val oldFile = new FileMetadata();
-            val path = newFile.getPath();
-            if (Paths.get(path).isAbsolute()) {
-                oldFile.setPath(newFile.getPath());
-            } else {
-                oldFile.setPath(Paths.get(configInfo.getBase().getBasePath(), newFile.getPath()).toString());
-            }
-            oldFile.setChecksum(calculateChecksum(oldFile.getPath()));
-            oldFile.setSize(Paths.get(oldFile.getPath()).toFile().length());
-            oldFiles.add(oldFile);
+    public static Configuration loadFromJson(String string) {
+        val mapper = new ObjectMapper();
+        try {
+            val configInfo = mapper.readValue(string, UpdateInfo.class);
+            return new Configuration(configInfo);
+        } catch (Exception e) {
+            throw new UpdaterException(e);
         }
-        return oldFiles;
     }
 
-    private String calculateChecksum(String path) {
-        return "";
+    public static String storeAsJson(UpdateInfo updateInfo) {
+        val mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(updateInfo);
+        } catch (Exception e) {
+            throw new UpdaterException(e);
+        }
     }
+
+    public void loadConfiguration(Configuration oldConfig, Configuration newConfig) {
+
+    }
+
+
+
+
 }

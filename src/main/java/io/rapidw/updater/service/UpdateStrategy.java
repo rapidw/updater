@@ -1,11 +1,8 @@
 package io.rapidw.updater.service;
 
-import io.rapidw.updater.serdes.ConfigInfo;
-import io.rapidw.updater.serdes.FileMetadata;
-
-import java.util.List;
+import io.rapidw.updater.Configuration;
 
 public interface UpdateStrategy {
 
-    boolean requireUpdate(ConfigInfo configInfo, List<FileMetadata> oldFileMetadata);
+    boolean requireUpdate(Configuration oldConfig, Configuration newConfig);
 }

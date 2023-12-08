@@ -1,4 +1,5 @@
 import groovy.json.JsonBuilder
+import io.rapidw.updater.Configuration
 import io.rapidw.updater.Updater
 import spock.lang.Specification
 
@@ -25,9 +26,8 @@ class ConfigurationSpec extends Specification {
 
     def "test"() {
         given:
-        given:
-        def builder = new JsonBuilder()
-        builder {
+        def oldBuilder = new JsonBuilder()
+        oldBuilder {
             base {
                 baseUri 'baseUri'
                 basePath 'basePath'
@@ -37,11 +37,31 @@ class ConfigurationSpec extends Specification {
             }
         }
 
-        def json = builder.toPrettyString()
-        def config = Updater.loadFromJson(json)
-        if (config.requireUpdate()) {
-            config.doUpdate()
-            config.launch()
+        def oldJson = oldBuilder.toPrettyString()
+
+        def newBuilder = new JsonBuilder()
+        newBuilder {
+            base {
+                baseUri 'baseUri'
+                basePath 'basePath'
+            }
+            properties {
+                name 'value'
+            }
         }
+
+        def newJson = newBuilder.toPrettyString()
+        def oldConfig = Configuration.loadFromJson(oldJson)
+        def newConfig = Configuration.loadFromJson(newJson)
+
+        def updater = Updater.builder().build()
+        if (updater.isUpdateRequired()) {
+            updater.backup()
+            if (!updater.doUpdate()) {
+                updater.rollBack()
+            }
+        }
+
+        updater.launchApplication()
     }
 }
