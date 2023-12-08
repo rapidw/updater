@@ -2,6 +2,7 @@ package io.rapidw.updater;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rapidw.updater.serdes.UpdateInfo;
+import io.rapidw.updater.service.RemoteFileHandler;
 import lombok.val;
 
 import java.nio.file.Paths;
@@ -44,8 +45,8 @@ public class Configuration {
         // 获取所有新文件
     }
 
-    public void getFiles() {
-
+    public void downloadFiles(RemoteFileHandler remoteFileHandler) {
+        updateInfo.getFiles().forEach(remoteFileHandler::download);
     }
 
     private void processPaths() {

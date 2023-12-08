@@ -4,5 +4,5 @@ import io.rapidw.updater.serdes.File;
 
 public interface RemoteFileHandler {
 
-    void getFile(File file);
+    void download(File file);
 }
